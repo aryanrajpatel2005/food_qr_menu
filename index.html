@@ -7,19 +7,30 @@
     <style>
         body { margin: 0; font-family: Arial, sans-serif; background-color: #fff8e1; padding-bottom: 80px; }
         header { background-color: #2e7d32; color: white; text-align: center; padding: 15px; font-size: 22px; font-weight: bold; }
+        
+        /* Table Input Style */
+        .table-input-section { background: #fff; padding: 15px; margin: 10px; border-radius: 10px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); text-align: center; }
+        .table-input-section input { padding: 10px; width: 80%; border: 1px solid #2e7d32; border-radius: 5px; font-size: 16px; outline: none; }
+
         .section { margin: 15px; }
         .section-title { background-color: #2e7d32; color: white; padding: 8px; text-align: center; border-radius: 20px; font-weight: bold; margin-bottom: 10px; }
         .item { display: flex; justify-content: space-between; align-items: center; padding: 10px 5px; border-bottom: 1px dashed #ccc; font-size: 15px; }
         .price-section { display: flex; align-items: center; gap: 10px; }
         .price { font-weight: bold; color: #b71c1c; }
-        .add-btn { background-color: #2e7d32; color: white; border: none; padding: 5px 12px; border-radius: 5px; cursor: pointer; font-size: 12px; }
-        .cart-bar { position: fixed; bottom: 0; width: 100%; background: #2e7d32; color: white; display: flex; justify-content: space-between; padding: 15px 20px; box-sizing: border-box; font-weight: bold; display: none; z-index: 1000; }
-        .checkout-btn { background: white; color: #2e7d32; border: none; padding: 5px 10px; border-radius: 5px; font-weight: bold; cursor: pointer; }
+        .add-btn { background-color: #2e7d32; color: white; border: none; padding: 5px 12px; border-radius: 5px; cursor: pointer; font-size: 12px; transition: 0.3s; }
+        .add-btn:active { transform: scale(0.9); background-color: #1b5e20; }
+
+        .cart-bar { position: fixed; bottom: 0; width: 100%; background: #2e7d32; color: white; display: flex; justify-content: space-between; padding: 15px 20px; box-sizing: border-box; font-weight: bold; display: none; z-index: 1000; box-shadow: 0 -2px 10px rgba(0,0,0,0.2); }
+        .checkout-btn { background: white; color: #2e7d32; border: none; padding: 5px 15px; border-radius: 5px; font-weight: bold; cursor: pointer; }
     </style>
 </head>
 <body>
 
 <header>Mr Shrmaji Restaurant</header>
+
+<div class="table-input-section">
+    <input type="number" id="tableNumber" placeholder="Enter Table Number (e.g. 5)" required>
+</div>
 
 <div class="section">
     <div class="section-title">Roti / Naan / Paratha</div>
@@ -55,32 +66,48 @@
 </div>
 
 <script>
-    let cart = [];
-    let total = 0;
+    let cart = {}; // Object used for Quantity System
+    let totalItems = 0;
+    let totalPrice = 0;
 
     function addToCart(name, price) {
-        cart.push({name, price});
-        total += price;
+        if (cart[name]) {
+            cart[name].qty += 1;
+        } else {
+            cart[name] = { price: price, qty: 1 };
+        }
+        totalItems += 1;
+        totalPrice += price;
         updateUI();
     }
 
     function updateUI() {
         const bar = document.getElementById('cartBar');
         const info = document.getElementById('cartInfo');
-        if(cart.length > 0) {
+        if(totalItems > 0) {
             bar.style.display = 'flex';
-            info.innerHTML = `Items: ${cart.length} | Total: ₹${total}`;
+            info.innerHTML = `Items: ${totalItems} | Total: ₹${totalPrice}`;
         }
     }
 
     function sendToWhatsApp() {
-        if(cart.length === 0) return;
-        let message = "New Order from Mr Shrmaji Restaurant:%0A";
-        cart.forEach((item, index) => {
-            message += `${index + 1}. ${item.name} - ₹${item.price}%0A`;
-        });
-        message += `%0A*Total Bill: ₹${total}*`;
-        // APNA NUMBER YAHAN DALO (Example: 919876543210)
+        const table = document.getElementById('tableNumber').value;
+        if(!table) {
+            alert("Please enter your Table Number first!");
+            return;
+        }
+
+        let message = `*New Order - Mr Shrmaji Restaurant*%0A`;
+        message += `*Table Number:* ${table}%0A%0A`;
+        message += `*Items:*%0A`;
+        
+        for (let name in cart) {
+            message += `- ${name} x ${cart[name].qty} = ₹${cart[name].qty * cart[name].price}%0A`;
+        }
+        
+        message += `%0A*Grand Total: ₹${totalPrice}*`;
+        
+        // Yahan apna number fir se sahi kar dein
         window.open(`https://wa.me/918690506204?text=${message}`);
     }
 </script>
