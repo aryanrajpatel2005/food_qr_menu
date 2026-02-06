@@ -23,7 +23,7 @@
 <header>Mr Shrmaji Restaurant</header>
 
 <div class="table-input-section">
-    <input type="number" id="tableNum" placeholder="Enter Table Number" required>
+    <input type="number" id="tableNum" placeholder="Enter Table Number" min="1" required>
 </div>
 
 <div class="section">
@@ -72,17 +72,33 @@
     }
 
     function orderNow() {
-        const table = document.getElementById('tableNum').value;
-        if(!table) { alert("Please enter Table Number!"); return; }
-        let msg = `*--- NEW ORDER ---*%0A*Table:* ${table}%0A%0A`;
-        for (let item in cart) { msg += `• ${item} x ${cart[item].qty} = ₹${cart[item].qty * cart[item].price}%0A`; }
+        const tableInput = document.getElementById('tableNum');
+        const table = tableInput.value;
+
+        // Table Number check (No Minus or Blank)
+        if(!table || table <= 0) { 
+            alert("Please enter a valid Table Number (1 or above)!"); 
+            return; 
+        }
+
+        let msg = `*--- MR SHRMAJI RESTAURANT ---*%0A`; // Restaurant Name Added
+        msg += `*Table:* ${table}%0A%0A`;
+        msg += `*Items Ordered:*%0A`;
+        
+        for (let item in cart) { 
+            msg += `• ${item} x ${cart[item].qty} = ₹${cart[item].qty * cart[item].price}%0A`; 
+        }
+        
         msg += `%0A*Grand Total: ₹${totalVal}*`;
-        // APNA NUMBER YAHAN UPDATE KAREIN
-        window.open(`https://wa.me/918690506204?text=${msg}`);
+        
+        // APNA NUMBER YAHAN UPDATE KAREIN (91XXXXXXXXXX)
+        const myNum = "918690506204";
+        window.open(`https://wa.me/${myNum}?text=${msg}`);
     }
 </script>
 </body>
 </html>
+
 
 
 
