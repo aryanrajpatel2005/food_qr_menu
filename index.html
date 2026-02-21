@@ -82,7 +82,6 @@
         document.getElementById('cartInfo').innerHTML = `Total: ₹${totalVal}`;
     }
 
-    // Fixed 12-hour Time logic
     function get12HourTime() {
         const d = new Date();
         let hours = d.getHours();
@@ -98,9 +97,9 @@
         const tableRaw = document.getElementById('tableNum').value;
         const tableNum = parseFloat(tableRaw);
 
-        // Validation to stop decimals like 1.9 or .05
+        // DECIMAL CHECK: 1.9 ya .05 ko rokne ke liye
         if(!tableRaw || tableNum <= 0 || !Number.isInteger(tableNum)) { 
-            alert("Kripya sahi Table Number dalein! (Points/Decimal allowed nahi hain)"); 
+            alert("Kripya sahi Table Number dalein! (Decimal points allowed nahi hain)"); 
             return; 
         }
 
@@ -124,19 +123,18 @@
         const dateStr = new Date().toLocaleDateString('en-GB');
         const timeStr = get12HourTime();
         
-        let msg = `--- MR HELLOJI RESTAURANT ---%0A`;
-        msg += `Date: ${dateStr}%0A`;
-        msg += `Time: ${timeStr}%0A`;
-        msg += `Table: ${table}%0A%0A`;
-        msg += `Items Ordered:%0A`;
+        // CLEAN WHATSAPP RECEIPT: No %0A visible
+        let msg = `--- MR HELLOJI RESTAURANT ---\n`;
+        msg += `Date: ${dateStr}\n`;
+        msg += `Time: ${timeStr}\n`;
+        msg += `Table: ${table}\n\n`;
+        msg += `Items Ordered:\n`;
         for (let item in cart) { 
-            msg += `- ${item} x ${cart[item].qty} = Rs.${cart[item].qty * cart[item].price}%0A`; 
+            msg += `- ${item} x ${cart[item].qty} = Rs.${cart[item].qty * cart[item].price}\n`; 
         }
-        msg += `%0AGrand Total: Rs.${totalVal}`;
+        msg += `\nGrand Total: Rs.${totalVal}`;
         
-        // APNA NUMBER YAHA UPDATE KAREIN
         const myNumber = "918690506204"; 
-        
         window.open(`https://api.whatsapp.com/send?phone=${myNumber}&text=${encodeURIComponent(msg)}`);
         closeReview();
     }
