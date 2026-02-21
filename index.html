@@ -24,7 +24,7 @@
         .review-list { text-align: left; margin: 15px 0; max-height: 200px; overflow-y: auto; font-size: 14px; }
         .confirm-btn { background-color: #2e7d32; color: white; border: none; padding: 12px 25px; border-radius: 8px; font-weight: bold; width: 100%; margin-top: 10px; }
         .cancel-btn { background: none; color: #666; border: none; margin-top: 15px; cursor: pointer; }
-        .dt-box { font-size: 12px; color: #555; margin-bottom: 10px; text-align: right; font-weight: bold; }
+        .dt-box { font-size: 12px; color: #555; margin-bottom: 10px; text-align: center; font-weight: bold; }
     </style>
 </head>
 <body>
@@ -62,6 +62,7 @@
     <div class="modal-content">
         <h3>Order Summary</h3>
         <div id="dateTimeDisplay" class="dt-box"></div>
+        <div id="tableDisplay" style="font-weight: bold; color: #2e7d32; margin-bottom: 10px;"></div>
         <div id="reviewList" class="review-list"></div>
         <hr>
         <h4 id="reviewTotal"></h4>
@@ -97,15 +98,18 @@
         const tableRaw = document.getElementById('tableNum').value;
         const tableNum = parseFloat(tableRaw);
 
-        // DECIMAL CHECK: 1.9 ya .05 ko rokne ke liye
+        // DECIMAL CHECK: Points rokhne ke liye
         if(!tableRaw || tableNum <= 0 || !Number.isInteger(tableNum)) { 
-            alert("Oops Please Enter Valid Number...!🙂(Not Decimal)"); 
+            alert("Kripya sahi Table Number dalein!"); 
             return; 
         }
 
         const dateStr = new Date().toLocaleDateString('en-GB'); 
         const timeStr = get12HourTime();
+        
+        // Modal Updates
         document.getElementById('dateTimeDisplay').innerHTML = `Date: ${dateStr} | Time: ${timeStr}`;
+        document.getElementById('tableDisplay').innerHTML = `Table Number: ${tableRaw}`;
         
         let reviewHtml = "";
         for (let item in cart) {
@@ -123,7 +127,7 @@
         const dateStr = new Date().toLocaleDateString('en-GB');
         const timeStr = get12HourTime();
         
-        // CLEAN WHATSAPP RECEIPT: No %0A visible
+        // Clean Formatting for WhatsApp
         let msg = `--- MR HELLOJI RESTAURANT ---\n`;
         msg += `Date: ${dateStr}\n`;
         msg += `Time: ${timeStr}\n`;
@@ -134,13 +138,14 @@
         }
         msg += `\nGrand Total: Rs.${totalVal}`;
         
-        const myNumber = "918690506204"; 
+        const myNumber = "918690506204"; [span_0](start_span)// Your Resume Number[span_0](end_span)
         window.open(`https://api.whatsapp.com/send?phone=${myNumber}&text=${encodeURIComponent(msg)}`);
         closeReview();
     }
 </script>
 </body>
 </html>
+
 
 
 
