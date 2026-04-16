@@ -18,15 +18,15 @@
         }
         
         body::before {
-            content: "🍕🍔🍟🌭🥗🥙🥪🌮🍗🍱🥟🍛🍜🍣🍘🍕🍔🍟🌭🥙🥗🥪🍻🍚🧆🍢🍥🥘🍲🍝🫕🍨🍩🍬🍫🍕🍔🍟🌭🥗🥙🥪🌮🍜🍕🍔🍟🌭🍲🥘🍛🍱🍕🍔🍟🌭🍱🫕🍻🍲🎂🧁🍻🧇";
+            content: "🍜 🍛 🥗 🍖 🍕 🥘 🍲 🧆 🥙 🍗 🌮 🥟 🍜 🍛 🥗 🍖 🍕 🥘 🍲 🧆 🥙 🍗 🌮 🥟 🍜 🍛 🥗 🍖 🍕 🥘 🍲 🧆 🥙 🍗 🌮 🥟";
             position: fixed;
             top: 0;
             left: 0;
             width: 200%;
             height: 200%;
-            font-size: 150px;
+            font-size: 120px;
             line-height: 1.8;
-            opacity: 0.30;
+            opacity: 0.15;
             pointer-events: none;
             z-index: -1;
             transform: rotate(-15deg);
@@ -596,7 +596,7 @@
 <div id="thankYouModal" class="thank-you-modal">
     <div class="thank-you-content">
         <div class="thank-you-icon">🙏</div>
-        <h2>Thank You..!🙂</h2>
+        <h2>Thank You...!🙂</h2>
         <p>Thank you for ordering!<br>Please visit again at<br><strong>Mr Helloji Restaurant</strong></p>
         <button class="thank-you-btn" onclick="closeThankYouModal()">OK</button>
     </div>
@@ -724,42 +724,41 @@
     }
 
     function orderNow() {
-        // Check if cart is empty
-        if (Object.keys(cart).length === 0 || totalVal === 0) {
+        // Check if cart has at least one item
+        if (Object.keys(cart).length > 0 && totalVal > 0) {
+            const table = document.getElementById('tableNum').value;
+            const dateStr = new Date().toLocaleDateString('en-GB');
+            const timeStr = get12HourTime();
+            const taxAmount = Math.round(totalVal * TAX_RATE);
+            const grandTotal = totalVal + taxAmount;
+            
+            let msg = `--- MR HELLOJI RESTAURANT ---\n`;
+            msg += `Date: ${dateStr}\n`;
+            msg += `Time: ${timeStr}\n`;
+            msg += `Table: ${table}\n\n`;
+            msg += `Items Ordered:\n`;
+            for (let item in cart) { 
+                msg += `- ${item} x ${cart[item].qty} = Rs.${cart[item].qty * cart[item].price}\n`; 
+            }
+            msg += `\n--- BILL BREAKDOWN ---\n`;
+            msg += `Subtotal: Rs.${totalVal}\n`;
+            msg += `GST (5%): Rs.${taxAmount}\n`;
+            msg += `Grand Total: Rs.${grandTotal}`;
+            
+            const myNumber = "918690506204";
+            const finalUrl = "https://wa.me/" + myNumber + "?text=" + encodeURIComponent(msg);
+            
+            // Close review modal and show thank you modal
+            document.getElementById('reviewModal').style.display = "none";
+            document.getElementById('thankYouModal').style.display = "block";
+            
+            // Open WhatsApp in background
+            window.open(finalUrl, '_blank');
+        } else {
             alert("❌ Please add at least one item to your order before sending!"); 
             return; 
         }
-
-        const table = document.getElementById('tableNum').value;
-        const dateStr = new Date().toLocaleDateString('en-GB');
-        const timeStr = get12HourTime();
-        const taxAmount = Math.round(totalVal * TAX_RATE);
-        const grandTotal = totalVal + taxAmount;
-        
-        let msg = `--- MR HELLOJI RESTAURANT ---\n`;
-        msg += `Date: ${dateStr}\n`;
-        msg += `Time: ${timeStr}\n`;
-        msg += `Table: ${table}\n\n`;
-        msg += `Items Ordered:\n`;
-        for (let item in cart) { 
-            msg += `- ${item} x ${cart[item].qty} = Rs.${cart[item].qty * cart[item].price}\n`; 
-        }
-        msg += `\n--- BILL BREAKDOWN ---\n`;
-        msg += `Subtotal: Rs.${totalVal}\n`;
-        msg += `GST (5%): Rs.${taxAmount}\n`;
-        msg += `Grand Total: Rs.${grandTotal}`;
-        
-        const myNumber = "918690506204";
-        const finalUrl = "https://wa.me/" + myNumber + "?text=" + encodeURIComponent(msg);
-        
-        // Close review modal and show thank you modal
-        document.getElementById('reviewModal').style.display = "none";
-        document.getElementById('thankYouModal').style.display = "block";
-        
-        // Open WhatsApp in background
-        window.open(finalUrl, '_blank');
     }
-
     function closeThankYouModal() {
         // Close thank you modal
         document.getElementById('thankYouModal').style.display = "none";
