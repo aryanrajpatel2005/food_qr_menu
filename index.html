@@ -36,6 +36,7 @@
         .bill-row { display: flex; justify-content: space-between; margin: 5px 0; }
         .bill-total { font-weight: bold; font-size: 16px; color: #2e7d32; border-top: 2px solid #ccc; padding-top: 8px; margin-top: 8px; }
         .confirm-btn { background-color: #2e7d32; color: white; border: none; padding: 15px 25px; border-radius: 8px; font-weight: bold; width: 100%; margin-top: 10px; cursor: pointer; }
+        .confirm-btn:disabled { background-color: #ccc; color: #999; cursor: not-allowed; }
         .cancel-btn { background: none; color: #666; border: none; margin-top: 15px; cursor: pointer; }
         .dt-box { font-size: 13px; color: #444; margin-bottom: 5px; text-align: center; font-weight: bold; }
     </style>
@@ -161,7 +162,13 @@
         const tableNum = parseFloat(tableRaw);
 
         if(!tableRaw || tableNum <= 0 || !Number.isInteger(tableNum)) { 
-            alert("Kripya sahi Table Number dalein! (Decimal allowed nahi hai)"); 
+            alert("Oops...!🙄Please enter a valid table number!"); 
+            return; 
+        }
+
+        // Check if cart is empty
+        if (Object.keys(cart).length === 0) {
+            alert("❌ Please add at least one item to your order!"); 
             return; 
         }
 
@@ -201,6 +208,10 @@
         document.getElementById('taxAmount').innerHTML = `₹${taxAmount}`;
         document.getElementById('billTotal').innerHTML = `₹${grandTotal}`;
         
+        // Enable WhatsApp button only if cart has items
+        const whatsappBtn = document.getElementById('whatsappBtn');
+        whatsappBtn.disabled = Object.keys(cart).length === 0;
+        
         document.getElementById('reviewModal').style.display = "block";
     }
 
@@ -209,6 +220,12 @@
     }
 
     function orderNow() {
+        // Check if cart is empty
+        if (Object.keys(cart).length === 0 || totalVal === 0) {
+            alert("❌ Please add at least one item to your order before sending!"); 
+            return; 
+        }
+
         const table = document.getElementById('tableNum').value;
         const dateStr = new Date().toLocaleDateString('en-GB');
         const timeStr = get12HourTime();
