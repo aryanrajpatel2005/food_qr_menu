@@ -1479,6 +1479,12 @@ function initTicTacToe() {
     }
  
     updateTicTacToeBoard();
+    
+    // Set SVG dimensions to match board
+    const svg = document.getElementById('tttSVG');
+    const boardRect = board.getBoundingClientRect();
+    svg.setAttribute('width', boardRect.width);
+    svg.setAttribute('height', boardRect.height);
 }
  
 // ===== CLICK HANDLER =====
@@ -1662,7 +1668,11 @@ function drawLine(combo) {
     const oldLine = document.getElementById('win-line');
     if (oldLine) oldLine.remove();
  
+    // Ensure SVG has correct dimensions
     const boardRect = board.getBoundingClientRect();
+    svg.setAttribute('width', boardRect.width);
+    svg.setAttribute('height', boardRect.height);
+
     const cellARect = cells[cellAIndex].getBoundingClientRect();
     const cellCRect = cells[cellCIndex].getBoundingClientRect();
  
@@ -1673,8 +1683,13 @@ function drawLine(combo) {
  
     const line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
     line.id = 'win-line';
-    line.setAttribute('x1', x1); line.setAttribute('y1', y1);
-    line.setAttribute('x2', x2); line.setAttribute('y2', y2);
+    line.setAttribute('x1', x1);
+    line.setAttribute('y1', y1);
+    line.setAttribute('x2', x2);
+    line.setAttribute('y2', y2);
+    line.setAttribute('stroke', 'url(#lineGradient)');
+    line.setAttribute('stroke-width', '5');
+    line.setAttribute('stroke-linecap', 'round');
     line.setAttribute('class', 'winning-line-svg');
     svg.appendChild(line);
 }
