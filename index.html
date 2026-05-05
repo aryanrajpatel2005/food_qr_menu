@@ -410,16 +410,23 @@
         .bill-row { 
             display: flex; 
             justify-content: space-between; 
-            margin: 5px 0;
+            margin: 8px 0;
         }
         
         .bill-total { 
             font-weight: bold; 
-            font-size: 16px; 
-            color: #2e7d32; 
-            border-top: 2px solid #ccc; 
-            padding-top: 8px; 
-            margin-top: 8px;
+            font-size: 18px; 
+            color: #d32f2f;
+            border-top: 3px solid #2e7d32; 
+            border-bottom: 3px solid #2e7d32;
+            padding-top: 12px; 
+            padding-bottom: 12px;
+            margin-top: 12px;
+            margin-bottom: 0;
+            background: rgba(46, 125, 50, 0.08);
+            border-radius: 6px;
+            padding-left: 8px;
+            padding-right: 8px;
         }
         
         .confirm-btn { 
@@ -448,7 +455,7 @@
             box-shadow: none;
         }
         
-        .cancel-btn { 
+.cancel-btn { 
             background: none; 
             color: #666; 
             border: none; 
@@ -460,6 +467,31 @@
         
         .cancel-btn:hover {
             color: #333;
+        }
+        
+        .continue-btn {
+            background: linear-gradient(135deg, #0d5e84 0%, #407b96 100%);
+            color: #eef1f4;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 8px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            width: 100%;
+            margin-top: 10px;
+            box-shadow: 0 2px 8px rgba(33, 150, 243, 0.2);
+        }
+        
+        .continue-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(33, 150, 243, 0.3);
+        }
+        
+        .modal-buttons-container {
+            display: flex;
+            flex-direction: column;
+            gap: 0;
         }
         
         .dt-box { 
@@ -569,6 +601,28 @@
             } 
         }
         
+        @keyframes slideDown {
+            from {
+                transform: translateX(-50%) translateY(-100px);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(-50%) translateY(0);
+                opacity: 1;
+            }
+        }
+        
+        @keyframes slideUp {
+            from {
+                transform: translateX(-50%) translateY(0);
+                opacity: 1;
+            }
+            to {
+                transform: translateX(-50%) translateY(-100px);
+                opacity: 0;
+            }
+        }
+        
         .thank-you-btn { 
             background: linear-gradient(135deg, #2e7d32 0%, #1b5e20 100%);
             color: white; 
@@ -602,7 +656,7 @@
             width: 100%;
             max-width: 450px;
             height: 100vh;
-            background: linear-gradient(135deg, #2e7d32 0%, #1b5e20 100%);
+            background: linear-gradient(135deg, #37c353 0%, #989a20 100%);
             z-index: 1500;
             transition: right 0.3s ease;
             box-shadow: -4px 0 20px rgba(0, 0, 0, 0.3);
@@ -676,33 +730,41 @@
         }
 
         /* Tic Tac Toe Styles */
-        .tictactoe-board {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 8px;
-            margin-bottom: 15px;
-        }
+        /* Tic Tac Toe Styles */
+.tictactoe-board {
+    display: grid;
+    /* grid-template-columns: repeat(3, 1fr) se teeno columns barabar space lenge */
+    grid-template-columns: repeat(3, 1fr); 
+    gap: 15px; /* Boxes ke beech ka gap hamesha 15px rahega */
+    margin-bottom: 15px;
+    width: 100%; /* Board ki width container ke hisaab se hogi */
+    max-width: 300px; /* Board zyada bada na ho jaye isliye max-width */
+    margin-left: auto;
+    margin-right: auto;
+    position: relative; /* Winning line ke liye zaroori hai */
+}
 
-        .tictactoe-cell {
-            width: 60px;
-            height: 60px;
-            background: linear-gradient(135deg, #f0f0f0 0%, #e0e0e0 100%);
-            border: 2px solid #2e7d32;
-            border-radius: 8px;
-            font-size: 28px;
-            font-weight: bold;
-            cursor: pointer;
-            transition: all 0.2s ease;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin: 0 auto;
-        }
+.tictactoe-cell {
+    /* Fixed width/height ki jagah aspect-ratio use karein */
+    aspect-ratio: 1 / 1; 
+    width: 100%; /* Column ki poori width lega */
+    background: linear-gradient(135deg, #f0f0f0 0%, #e0e0e0 100%);
+    border: 2px solid #2e7d32;
+    border-radius: 8px;
+    font-size: 28px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    /* Margin auto hatayein kyunki Grid khud align karta hai */
+}
 
-        .tictactoe-cell:hover {
-            background: linear-gradient(135deg, #fff9e6 0%, #ffe8cc 100%);
-            transform: scale(1.05);
-        }
+.tictactoe-cell:hover {
+    background: linear-gradient(135deg, #fff9e6 0%, #ffe8cc 100%);
+    transform: scale(1.05);
+}
 
         .tictactoe-cell.x {
             color: #d32f2f;
@@ -1109,8 +1171,11 @@
                 <span id="billTotal">₹0</span>
             </div>
         </div>
-        <button class="confirm-btn" id="whatsappBtn" onclick="orderNow()">Send Order (WhatsApp)</button>
-        <button class="cancel-btn" onclick="closeReview()">Close</button>
+        <div class="modal-buttons-container">
+            <button class="confirm-btn" id="whatsappBtn" onclick="orderNow()">✓ Send Order (WhatsApp)</button>
+            <button class="continue-btn" onclick="continueShoppingFromReview()">🍽️ Add More Items</button>
+            <button class="cancel-btn" onclick="closeReview()">Close</button>
+        </div>
     </div>
 </div>
 
@@ -1133,10 +1198,10 @@
     <!-- Games List View -->
     <div id="gamesList" class="games-list">
         <div class="game-list-item" onclick="selectGame('tictactoe')">
-            <div class="game-icon">⭕</div>
+            <div class="game-icon">🎮</div>
             <div class="game-list-info">
                 <div class="game-list-name">Tic Tac Toe</div>
-                <div class="game-list-desc">Play against AI and try to get 3 in a row</div>
+                <div class="game-list-desc">Beat the AI or play with a friend</div>
             </div>
             <div class="game-arrow">›</div>
         </div>
@@ -1148,7 +1213,7 @@
     <div id="tictactoeView" class="game-view">
         <div class="game-view-header">
             <button class="back-btn" onclick="backToGamesList()">‹</button>
-            <div class="game-view-title">⭕ Tic Tac Toe</div>
+            <div class="game-view-title">🎮 Tic Tac Toe</div>
         </div>
         <div class="game-view-content">
             <!-- Mode Selection -->
@@ -1313,6 +1378,45 @@
         document.getElementById('reviewModal').style.display = "none"; 
     }
 
+    function continueShoppingFromReview() {
+        // Close review modal and let customer add more items
+        // Cart remains intact, customer can scroll menu and add more items
+        document.getElementById('reviewModal').style.display = "none";
+        
+        // Scroll back to top so customer can see menu items
+        window.scrollTo(0, 0);
+        
+        // Show a brief notification that cart is still active
+        showNotification("✓ Cart saved! Add more items to your order");
+    }
+
+    function showNotification(message) {
+        // Create and show temporary notification
+        const notification = document.createElement('div');
+        notification.style.cssText = `
+            position: fixed;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: linear-gradient(135deg, #4fc3f7 0%, #29b6f6 100%);
+            color: #01579b;
+            padding: 15px 25px;
+            border-radius: 8px;
+            font-weight: bold;
+            z-index: 3500;
+            box-shadow: 0 4px 15px rgba(33, 150, 243, 0.3);
+            animation: slideDown 0.3s ease-out;
+        `;
+        notification.textContent = message;
+        document.body.appendChild(notification);
+        
+        // Remove notification after 3 seconds
+        setTimeout(() => {
+            notification.style.animation = 'slideUp 0.3s ease-out forwards';
+            setTimeout(() => notification.remove(), 300);
+        }, 3000);
+    }
+
     function orderNow() {
         // Check if cart has at least one item
         if (Object.keys(cart).length > 0 && totalVal > 0) {
@@ -1322,18 +1426,28 @@
             const taxAmount = Math.round(totalVal * TAX_RATE);
             const grandTotal = totalVal + taxAmount;
             
-            let msg = `--- MR HELLOJI RESTAURANT ---\n`;
-            msg += `Date: ${dateStr}\n`;
-            msg += `Time: ${timeStr}\n`;
-            msg += `Table: ${table}\n\n`;
-            msg += `Items Ordered:\n`;
+            let msg = `🍽️ MR HELLOJI RESTAURANT 🍽️\n`;
+            msg += `════════════════════════════\n`;
+            msg += `📅 Date: ${dateStr}\n`;
+            msg += `⏰ Time: ${timeStr}\n`;
+            msg += `🪑 Table: ${table}\n`;
+            msg += `════════════════════════════\n\n`;
+            msg += `📋 ITEMS ORDERED:\n`;
+            msg += `─────────────────────────────\n`;
             for (let item in cart) { 
-                msg += `- ${item} x ${cart[item].qty} = Rs.${cart[item].qty * cart[item].price}\n`; 
+                msg += `• ${item}\n   Qty: ${cart[item].qty} × ₹${cart[item].price} = ₹${cart[item].qty * cart[item].price}\n`; 
             }
-            msg += `\n--- BILL BREAKDOWN ---\n`;
-            msg += `Subtotal: Rs.${totalVal}\n`;
-            msg += `GST (5%): Rs.${taxAmount}\n`;
-            msg += `Grand Total: Rs.${grandTotal}`;
+            msg += `\n════════════════════════════\n`;
+            msg += `💰 BILL BREAKDOWN:\n`;
+            msg += `════════════════════════════\n`;
+            msg += `Subtotal............₹${totalVal}\n`;
+            msg += `GST (5%)............₹${taxAmount}\n`;
+            msg += `────────────────────────────\n`;
+            msg += `🎯 GRAND TOTAL.....₹${grandTotal}\n`;
+            msg += `════════════════════════════\n`;
+            msg += `\n✅ Order Confirmed!\n`;
+            msg += `Thank you for your order!\n`;
+            msg += `We will prepare your food soon. 🚀`;
             
             const myNumber = "918690506204";
             const finalUrl = "https://wa.me/" + myNumber + "?text=" + encodeURIComponent(msg);
@@ -1575,16 +1689,18 @@ function checkDraw() {
     return !tttBoard.includes('');
 }
  
-// ===== MINIMAX ALGORITHM =====
+// ===== MINIMAX ALGORITHM (MEDIUM DIFFICULTY) =====
+// Bot thinks 6 levels ahead (not unbeatable, but challenging)
  
 function findBestMove() {
+    const MAX_DEPTH = 6;  // Medium difficulty: limits bot's look-ahead
     let bestScore = -Infinity;
     let bestMove = -1;
  
     for (let i = 0; i < 9; i++) {
         if (tttBoard[i] === '') {
             tttBoard[i] = 'O';
-            const score = minimax(tttBoard, 0, false);
+            const score = minimax(tttBoard, 0, false, MAX_DEPTH);
             tttBoard[i] = '';
             if (score > bestScore) {
                 bestScore = score;
@@ -1596,13 +1712,16 @@ function findBestMove() {
     return bestMove;
 }
  
-function minimax(board, depth, isMaximizing) {
+function minimax(board, depth, isMaximizing, maxDepth) {
     // Terminal state checks — order matters:
     // 1. Check wins first, then draw.
     // 2. Pass board explicitly (not global) so recursive calls work correctly.
     if (checkWinOn(board, 'O')) return 10 - depth;  // Bot wins (sooner = better)
     if (checkWinOn(board, 'X')) return depth - 10;  // Player wins (sooner = worse)
     if (!board.includes('')) return 0;              // Draw
+    
+    // MEDIUM DIFFICULTY: Stop searching after maxDepth to make bot beatable
+    if (depth >= maxDepth) return 0;  // Return neutral score - bot doesn't see beyond this
  
     if (isMaximizing) {
         // Bot's turn (O) — maximize score
@@ -1610,7 +1729,7 @@ function minimax(board, depth, isMaximizing) {
         for (let i = 0; i < 9; i++) {
             if (board[i] === '') {
                 board[i] = 'O';
-                best = Math.max(best, minimax(board, depth + 1, false));
+                best = Math.max(best, minimax(board, depth + 1, false, maxDepth));
                 board[i] = '';
             }
         }
@@ -1621,7 +1740,7 @@ function minimax(board, depth, isMaximizing) {
         for (let i = 0; i < 9; i++) {
             if (board[i] === '') {
                 board[i] = 'X';
-                best = Math.min(best, minimax(board, depth + 1, true));
+                best = Math.min(best, minimax(board, depth + 1, true, maxDepth));
                 board[i] = '';
             }
         }
