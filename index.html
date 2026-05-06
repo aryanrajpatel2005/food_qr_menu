@@ -113,32 +113,71 @@
         }
         
         .table-input-section { 
-            background: rgba(255, 255, 255, 0.95); 
+            background: linear-gradient(135deg, rgba(46, 125, 50, 0.08) 0%, rgba(27, 94, 32, 0.08) 100%);
             backdrop-filter: blur(10px);
-            padding: 15px; 
-            margin: 15px; 
-            border-radius: 12px; 
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1); 
-            text-align: center; 
-            border: 2px solid #2e7d32;
+            padding: 25px; 
+            margin: 15px auto; 
+            border-radius: 20px; 
+            box-shadow: 0 8px 25px rgba(46, 125, 50, 0.15); 
+            border: 2px solid rgba(46, 125, 50, 0.2);
             position: relative;
             z-index: 10;
+            max-width: 500px;
+        }
+        
+        .booking-header {
+            text-align: center;
+            margin-bottom: 20px;
+            font-size: 20px;
+            font-weight: 700;
+            background: linear-gradient(135deg, #2e7d32 0%, #1b5e20 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+        }
+        
+        .booking-inputs-row {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 15px;
+            margin-bottom: 0;
+        }
+        
+        .booking-inputs-row.two-cols {
+            grid-template-columns: 1.5fr 1fr;
+            gap: 12px;
         }
         
         .table-input-section input { 
-            padding: 12px; 
-            width: 85%; 
-            border: 2px solid #e0e0e0; 
-            border-radius: 8px; 
+            padding: 14px 18px; 
+            width: 100%; 
+            border: 2px solid rgba(46, 125, 50, 0.3); 
+            border-radius: 12px; 
             font-size: 16px; 
             text-align: center;
             transition: all 0.3s ease;
+            background: rgba(255, 255, 255, 0.9);
+            font-weight: 500;
+            color: #333;
+        }
+        
+        .table-input-section input::placeholder {
+            color: #999;
+            font-weight: 400;
         }
         
         .table-input-section input:focus {
             outline: none;
             border-color: #2e7d32;
-            box-shadow: 0 0 8px rgba(46, 125, 50, 0.2);
+            box-shadow: 0 0 12px rgba(46, 125, 50, 0.25);
+            background: rgba(255, 255, 255, 0.98);
+            transform: translateY(-2px);
+        }
+        
+        .table-input-section label {
+            display: none;
         }
         
         .section { 
@@ -402,9 +441,12 @@
             margin: 15px 0; 
             padding: 15px; 
             background: linear-gradient(135deg, #f5f5f5 0%, #eeeeee 100%);
-            border-radius: 8px; 
+            border-radius: 16px; 
             font-size: 14px;
-            border-left: 4px solid #2e7d32;
+            border: 2px solid rgba(46, 125, 50, 0.15);
+            border-left: 5px solid #2e7d32;
+            overflow: hidden;
+            box-shadow: 0 2px 8px rgba(46, 125, 50, 0.1);
         }
         
         .bill-row { 
@@ -1124,7 +1166,16 @@
 </header>
 
 <div class="table-input-section">
-    <input type="number" id="tableNum" placeholder="Enter Table Number" min="1" step="1">
+    <div class="booking-header">BOOKING INFO</div>
+    
+    <div class="booking-inputs-row">
+        <input type="text" id="customerName" placeholder="Customer Name" maxlength="50">
+    </div>
+    
+    <div class="booking-inputs-row two-cols">
+        <input type="number" id="tableNum" placeholder="Table Number" min="1" step="1">
+        <input type="number" id="totalPersons" placeholder="Total Persons" min="1" step="1" oninput="validatePersons()">
+    </div>
 </div>
 
 <div class="section">
@@ -1317,13 +1368,36 @@
         return hours + ':' + minutes + ' ' + ampm;
     }
 
+    function validatePersons() {
+        const personsInput = document.getElementById('totalPersons');
+        const value = parseInt(personsInput.value);
+        
+        // Ensure value is at least 1
+        if (value < 1 || isNaN(value)) {
+            personsInput.value = '1';
+        }
+    }
+
     function showReview() {
+        const customerName = document.getElementById('customerName').value.trim();
         const tableRaw = document.getElementById('tableNum').value;
         const tableNum = parseFloat(tableRaw);
+        const totalPersonsRaw = document.getElementById('totalPersons').value;
+        const totalPersons = parseInt(totalPersonsRaw);
+
+        if (!customerName) {
+            alert("❌ Please enter your name!");
+            return;
+        }
 
         if(!tableRaw || tableNum <= 0 || !Number.isInteger(tableNum)) { 
-            alert("Oops...!🙄Please enter a valid table number!"); 
+            alert("Oops...!🙄 Please enter a valid table number!"); 
             return; 
+        }
+
+        if (!totalPersonsRaw || totalPersons < 1 || !Number.isInteger(totalPersons)) {
+            alert("❌ Please enter valid number of persons (minimum 1)!");
+            return;
         }
 
         // Check if cart is empty
@@ -1336,7 +1410,7 @@
         const timeStr = get12HourTime();
         
         document.getElementById('dateTimeDisplay').innerHTML = `Date: ${dateStr} | Time: ${timeStr}`;
-        document.getElementById('tableDisplay').innerHTML = `Table Number: ${tableRaw}`;
+        document.getElementById('tableDisplay').innerHTML = `Customer Name: ${customerName} | Table: ${tableRaw} | Persons: ${totalPersons}`;
         
         let reviewHtml = "";
         let calculatedTotal = 0;
@@ -1423,7 +1497,9 @@
     function orderNow() {
         // Check if cart has at least one item
         if (Object.keys(cart).length > 0) {
+            const customerName = document.getElementById('customerName').value.trim();
             const table = document.getElementById('tableNum').value;
+            const totalPersons = document.getElementById('totalPersons').value;
             const dateStr = new Date().toLocaleDateString('en-GB');
             const timeStr = get12HourTime();
             
@@ -1438,9 +1514,10 @@
             
             let msg = `--- RYZEN CAFE ---\n`;
             msg += `=========================\n`;
+            msg += `Customer Name: ${customerName}\n`;
+            msg += `Table: ${table} | Persons: ${totalPersons}\n`;
             msg += `Date: ${dateStr}\n`;
             msg += `Time: ${timeStr}\n`;
-            msg += `Table: ${table}\n`;
             msg += `=========================\n\n`;
             msg += `ITEMS ORDERED:\n`;
             msg += `───────────────────────\n`;
@@ -1486,8 +1563,10 @@
         document.getElementById('cartBar').style.display = 'none';
         updateCartDisplay();
         
-        // Clear table number
+        // Clear all input fields
+        document.getElementById('customerName').value = '';
         document.getElementById('tableNum').value = '';
+        document.getElementById('totalPersons').value = '';
     }
 
     // ==================== GAMES FUNCTIONS ====================
