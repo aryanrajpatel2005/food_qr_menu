@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Mr Helloji Restaurant Menu</title>
+    <title>RYZEN CAFE Menu</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <style>
         * { box-sizing: border-box; }
@@ -1113,7 +1113,7 @@
         <path d="M 50 5 L 53 13 L 61 13 L 54 18 L 57 26 L 50 21 L 43 26 L 46 18 L 39 13 L 47 13 Z" fill="#fdbf5e" opacity="0.6"/>
     </svg>
     <div class="header-content">
-        <div>Mr Helloji Restaurant</div>
+        <div>RYZEN CAFE</div>
         <div style="font-size: 12px; font-weight: normal; letter-spacing: 1px;">🍽️ Menu QR 🍽️</div>
     </div>
     <button class="hamburger-btn" id="hamburgerBtn" onclick="toggleGamesMenu()">
@@ -1183,7 +1183,7 @@
     <div class="thank-you-content">
         <div class="thank-you-icon">🙏</div>
         <h2>Thank You...!</h2>
-        <p>Thank you for ordering!<br>Please visit again at<br><strong>Mr Helloji Restaurant</strong></p>
+        <p>Thank you for ordering!<br>Please visit again at<br><strong>RYZEN CAFE</strong></p>
         <button class="thank-you-btn" onclick="closeThankYouModal()">OK</button>
     </div>
 </div>
@@ -1268,14 +1268,12 @@
         } else { 
             cart[name] = { price: price, qty: 1, type: type }; 
         }
-        totalVal += price;
         document.getElementById('cartBar').style.display = 'flex';
         updateCartDisplay();
     }
 
     function removeFromCart(name) {
         if (cart[name]) {
-            totalVal -= (cart[name].price * cart[name].qty);
             delete cart[name];
         }
         if (Object.keys(cart).length === 0) {
@@ -1288,14 +1286,11 @@
 
     function updateQty(name, change) {
         if (cart[name]) {
-            const oldQty = cart[name].qty;
             cart[name].qty += change;
             
             if (cart[name].qty <= 0) {
                 removeFromCart(name);
             } else {
-                const priceChange = cart[name].price * change;
-                totalVal += priceChange;
                 updateCartDisplay();
                 showReview();
             }
@@ -1303,6 +1298,12 @@
     }
 
     function updateCartDisplay() {
+        // Recalculate total from cart to ensure accuracy
+        let total = 0;
+        for (let item in cart) {
+            total += cart[item].price * cart[item].qty;
+        }
+        totalVal = total;
         document.getElementById('cartInfo').innerHTML = `Total: ₹${totalVal}`;
     }
 
@@ -1338,13 +1339,15 @@
         document.getElementById('tableDisplay').innerHTML = `Table Number: ${tableRaw}`;
         
         let reviewHtml = "";
+        let calculatedTotal = 0;
         for (let item in cart) {
             const qty = cart[item].qty;
             const itemTotal = cart[item].qty * cart[item].price;
+            calculatedTotal += itemTotal;
             reviewHtml += `<div class="review-item">
-                <div style="flex: 1; text-align: left;">
-                    <strong>${item}</strong><br>
-                    <span style="color: #666;">₹${cart[item].price} x ${qty}</span>
+                <div style="flex: 1; text-align: left; display: flex; flex-direction: column; align-items: flex-start;">
+                    <strong style="display: block;"> • ${item}</strong>
+                    <span style="color: #666; font-size: 14px; margin-top: 4px;">₹${cart[item].price} x ${qty}</span>
                 </div>
                 <div style="text-align: right; display: flex; flex-direction: column; gap: 8px; align-items: flex-end;">
                     <strong style="color: #b71c1c;">₹${itemTotal}</strong>
@@ -1359,11 +1362,11 @@
         }
         document.getElementById('reviewList').innerHTML = reviewHtml;
         
-        // Calculate tax
-        const taxAmount = Math.round(totalVal * TAX_RATE);
-        const grandTotal = totalVal + taxAmount;
+        // Calculate tax based on actual cart total
+        const taxAmount = Math.round(calculatedTotal * TAX_RATE);
+        const grandTotal = calculatedTotal + taxAmount;
         
-        document.getElementById('subtotal').innerHTML = `₹${totalVal}`;
+        document.getElementById('subtotal').innerHTML = `₹${calculatedTotal}`;
         document.getElementById('taxAmount').innerHTML = `₹${taxAmount}`;
         document.getElementById('billTotal').innerHTML = `₹${grandTotal}`;
         
@@ -1419,35 +1422,42 @@
 
     function orderNow() {
         // Check if cart has at least one item
-        if (Object.keys(cart).length > 0 && totalVal > 0) {
+        if (Object.keys(cart).length > 0) {
             const table = document.getElementById('tableNum').value;
             const dateStr = new Date().toLocaleDateString('en-GB');
             const timeStr = get12HourTime();
-            const taxAmount = Math.round(totalVal * TAX_RATE);
-            const grandTotal = totalVal + taxAmount;
             
-            let msg = `🍽️ MR HELLOJI RESTAURANT 🍽️\n`;
-            msg += `════════════════════════════\n`;
-            msg += `📅 Date: ${dateStr}\n`;
-            msg += `⏰ Time: ${timeStr}\n`;
-            msg += `🪑 Table: ${table}\n`;
-            msg += `════════════════════════════\n\n`;
-            msg += `📋 ITEMS ORDERED:\n`;
-            msg += `─────────────────────────────\n`;
-            for (let item in cart) { 
-                msg += `• ${item}\n   Qty: ${cart[item].qty} × ₹${cart[item].price} = ₹${cart[item].qty * cart[item].price}\n`; 
+            // Recalculate total from cart for accuracy
+            let calculatedTotal = 0;
+            for (let item in cart) {
+                calculatedTotal += cart[item].price * cart[item].qty;
             }
-            msg += `\n════════════════════════════\n`;
-            msg += `💰 BILL BREAKDOWN:\n`;
-            msg += `════════════════════════════\n`;
-            msg += `Subtotal............₹${totalVal}\n`;
-            msg += `GST (5%)............₹${taxAmount}\n`;
-            msg += `────────────────────────────\n`;
-            msg += `🎯 GRAND TOTAL.....₹${grandTotal}\n`;
-            msg += `════════════════════════════\n`;
-            msg += `\n✅ Order Confirmed!\n`;
-            msg += `Thank you for your order!\n`;
-            msg += `We will prepare your food soon. 🚀`;
+            
+            const taxAmount = Math.round(calculatedTotal * TAX_RATE);
+            const grandTotal = calculatedTotal + taxAmount;
+            
+            let msg = `--- RYZEN CAFE ---\n`;
+            msg += `=========================\n`;
+            msg += `Date: ${dateStr}\n`;
+            msg += `Time: ${timeStr}\n`;
+            msg += `Table: ${table}\n`;
+            msg += `=========================\n\n`;
+            msg += `ITEMS ORDERED:\n`;
+            msg += `───────────────────────\n`;
+            for (let item in cart) { 
+                msg += `• ${item}\n   Qty: ${cart[item].qty} x Rs.${cart[item].price} = Rs.${cart[item].qty * cart[item].price}\n`; 
+            }
+            msg += `\n=========================\n`;
+            msg += `BILL BREAKDOWN:\n`;
+            msg += `=========================\n`;
+            msg += `Subtotal............Rs.${calculatedTotal}\n`;
+            msg += `GST (5%)............Rs.${taxAmount}\n`;
+            msg += `───────────────────────\n`;
+            msg += `GRAND TOTAL.....Rs.${grandTotal}\n`;
+            msg += `=========================\n`;
+            msg += `\nOrder Confirmed\n`;
+            msg += `Thank you for ordering\n`;
+            msg += ` `;
             
             const myNumber = "918690506204";
             const finalUrl = "https://wa.me/" + myNumber + "?text=" + encodeURIComponent(msg);
